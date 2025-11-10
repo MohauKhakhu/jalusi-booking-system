@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jalusi Beauty - Booking & Task Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #f8c8dc;
+            --secondary: #d4a5c0;
+            --accent: #b76e79;
+            --dark: #333;
+            --light: #f9f9f9;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #f8c8dc 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: white;
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo i {
+            color: var(--accent);
+            font-size: 2rem;
+        }
+
+        .logo h1 {
+            color: var(--dark);
+            font-size: 1.8rem;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .tab-btn {
+            padding: 1rem 2rem;
+            background: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .tab-btn.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        .tab-btn:hover:not(.active) {
+            background: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .booking-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .time-slots {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .time-slot {
+            padding: 0.75rem;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .time-slot:hover {
+            border-color: var(--primary);
+        }
+
+        .time-slot.booked {
+            background: #f8d7da;
+            color: #721c24;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .time-slot.selected {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #a55a66;
+            transform: translateY(-2px);
+        }
+
+        .calendar {
+            background: var(--light);
+            border-radius: 10px;
+            padding: 1rem;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+
+        .calendar-day {
+            padding: 1rem;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .calendar-day:hover {
+            background: var(--primary);
+        }
+
+        .calendar-day.selected {
+            background: var(--accent);
+            color: white;
+        }
+
+        .calendar-day.unavailable {
+            background: #f8d7da;
+            color: #721c24;
+            cursor: not-allowed;
+        }
+
+        .task-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .task-item {
+            background: var(--light);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid var(--accent);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .task-info h4 {
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .task-meta {
+            display: flex;
+            gap: 1rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .task-status {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-todo { background: #fff3cd; color: #856404; }
+        .status-in-progress { background: #cce7ff; color: #004085; }
+        .status-completed { background: #d4edda; color: #155724; }
+
+        .task-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+        }
+
+        .availability-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        .available { background: var(--success); }
+        .busy { background: var(--danger); }
+
+        @media (max-width: 768px) {
+            .booking-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-tabs {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-spa"></i>
+                <h1>Jalusi Beauty</h1>
+            </div>
+        </header>
+
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab('booking')">
+                <i class="fas fa-calendar-plus"></i> Book Appointment
+            </button>
+            <button class="tab-btn" onclick="switchTab('tasks')">
+                <i class="fas fa-tasks"></i> Task Management
+            </button>
+            <button class="tab-btn" onclick="switchTab('schedule')">
+                <i class="fas fa-clock"></i> My Schedule
+            </button>
+        </div>
+
+        <!-- Booking Tab -->
+        <div id="booking" class="tab-content active">
+            <h2>Book Your Appointment</h2>
+            <p style="color: #666; margin-bottom: 2rem;">Select your service, specialist, and preferred time</p>
+
+            <div class="booking-form">
+                <div>
+                    <div class="form-group">
+                        <label for="service">Select Service</label>
+                        <select id="service" class="form-control" onchange="updateSpecialists()">
+                            <option value="">Choose a service...</option>
+                            <option value="microblading">Microblading - R850</option>
+                            <option value="lash-lift">Lash Lift - R450</option>
+                            <option value="brow-lamination">Brow Lamination - R500</option>
+                            <option value="facial">Signature Facial - R600</option>
+                            <option value="waxing">Full Body Waxing - R750</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="specialist">Select Specialist</label>
+                        <select id="specialist" class="form-control" onchange="updateAvailability()">
+                            <option value="">Choose a specialist...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="clientName">Your Name</label>
+                        <input type="text" id="clientName" class="form-control" placeholder="Enter your full name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="clientEmail">Email</label>
+                        <input type="email" id="clientEmail" class="form-control" placeholder="Enter your email">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="clientPhone">Phone</label>
+                        <input type="tel" id="clientPhone" class="form-control" placeholder="Enter your phone number">
+                    </div>
+                </div>
+
+                <div>
+                    <div class="form-group">
+                        <label>Select Date</label>
+                        <div class="calendar">
+                            <div class="calendar-header">
+                                <button class="btn btn-sm" onclick="changeMonth(-1)"><i class="fas fa-chevron-left"></i></button>
+                                <h4 id="currentMonth">February 2024</h4>
+                                <button class="btn btn-sm" onclick="changeMonth(1)"><i class="fas fa-chevron-right"></i></button>
+                            </div>
+                            <div class="calendar-grid" id="calendarDays">
+                                <!-- Calendar days will be generated here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Available Time Slots</label>
+                        <div class="time-slots" id="timeSlots">
+                            <!-- Time slots will be generated here -->
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Specialist Availability</label>
+                        <div id="availabilityStatus" style="padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                            Please select a service and specialist to view availability
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" style="width: 100%;" onclick="bookAppointment()">
+                        <i class="fas fa-check"></i> Confirm Booking
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Task Management Tab -->
+        <div id="tasks" class="tab-content">
+            <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 2rem;">
+                <h2>Task Management</h2>
+                <button class="btn btn-primary" onclick="showAddTaskModal()">
+                    <i class="fas fa-plus"></i> Add New Task
+                </button>
+            </div>
+
+            <div class="task-list" id="taskList">
+                <!-- Task items will be generated here -->
+            </div>
+        </div>
+
+        <!-- Schedule Tab -->
+        <div id="schedule" class="tab-content">
+            <h2>My Schedule</h2>
+            <p style="color: #666; margin-bottom: 2rem;">View your upcoming appointments and daily schedule</p>
+
+            <div id="scheduleView">
+                <!-- Schedule will be generated here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data
+        const specialists = {
+            microblading: ['Anna Smith', 'Jessica Brown'],
+            'lash-lift': ['Maria Garcia', 'Sarah Wilson'],
+            'brow-lamination': ['Anna Smith', 'Maria Garcia'],
+            'facial': ['Emily Davis', 'Sarah Wilson'],
+            'waxing': ['Emily Davis', 'Jessica Brown']
+        };
+
+        const bookedSlots = {
+            '2024-02-15': ['09:00', '11:00', '14:00'],
+            '2024-02-16': ['10:00', '13:00', '15:00'],
+            '2024-02-20': ['09:00', '11:30', '16:00']
+        };
+
+        let tasks = [
+            { id: 1, title: 'Client Consultation - Lisa', assignedTo: 'Anna Smith', dueDate: '2024-02-15', status: 'in-progress', type: 'appointment' },
+            { id: 2, title: 'Inventory Restock', assignedTo: 'Maria Garcia', dueDate: '2024-02-16', status: 'todo', type: 'task' },
+            { id: 3, title: 'Microblading - Sarah', assignedTo: 'Anna Smith', dueDate: '2024-02-15', status: 'completed', type: 'appointment' },
+            { id: 4, title: 'Social Media Content', assignedTo: 'Emily Davis', dueDate: '2024-02-18', status: 'in-progress', type: 'task' }
+        ];
+
+        let currentDate = new Date();
+        let selectedDate = null;
+        let selectedTime = null;
+        let selectedSpecialist = null;
+
+        // Initialize the application
+        function init() {
+            renderCalendar();
+            renderTasks();
+            renderSchedule();
+        }
+
+        // Tab switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.getElementById(tabName).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // Update specialists based on service selection
+        function updateSpecialists() {
+            const service = document.getElementById('service').value;
+            const specialistSelect = document.getElementById('specialist');
+            
+            specialistSelect.innerHTML = '<option value="">Choose a specialist...</option>';
+            
+            if (service && specialists[service]) {
+                specialists[service].forEach(specialist => {
+                    const option = document.createElement('option');
+                    option.value = specialist;
+                    option.textContent = specialist;
+                    specialistSelect.appendChild(option);
+                });
+            }
+            
+            updateAvailability();
+        }
+
+        // Update availability display
+        function updateAvailability() {
+            const specialist = document.getElementById('specialist').value;
+            const statusDiv = document.getElementById('availabilityStatus');
+            
+            if (specialist) {
+                selectedSpecialist = specialist;
+                statusDiv.innerHTML = `
+                    <div style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+                        <span class="availability-indicator available"></span>
+                        <strong>${specialist}</strong> is available for selected service
+                    </div>
+                    <small style="color: #666;">Next available slot: Tomorrow at 09:00 AM</small>
+                `;
+                generateTimeSlots();
+            } else {
+                statusDiv.textContent = 'Please select a service and specialist to view availability';
+            }
+        }
+
+        // Calendar functions
+        function renderCalendar() {
+            const monthNames = ["January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+            ];
+            
+            document.getElementById('currentMonth').textContent = 
+                `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+            
+            const calendarGrid = document.getElementById('calendarDays');
+            calendarGrid.innerHTML = '';
+            
+            // Add day headers
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            days.forEach(day => {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                dayElement.style.fontWeight = 'bold';
+                dayElement.textContent = day;
+                calendarGrid.appendChild(dayElement);
+            });
+            
+            // Get first day of month
+            const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
+            
+            // Add empty cells for days before first day of month
+            for (let i = 0; i < firstDay; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.className = 'calendar-day';
+                calendarGrid.appendChild(emptyDay);
+            }
+            
+            // Add days of month
+            const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
+            
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                dayElement.textContent = day;
+                
+                const dateString = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+                
+                // Mark unavailable days (Sundays and some random days for demo)
+                if (new Date(currentDate.getFullYear(), currentDate.getMonth(), day).getDay() === 0) {
+                    dayElement.classList.add('unavailable');
+                } else {
+                    dayElement.onclick = () => selectDate(dayElement, dateString);
+                }
+                
+                calendarGrid.appendChild(dayElement);
+            }
+        }
+
+        function changeMonth(direction) {
+            currentDate.setMonth(currentDate.getMonth() + direction);
+            renderCalendar();
+        }
+
+        function selectDate(element, dateString) {
+            document.querySelectorAll('.calendar-day').forEach(day => {
+                day.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            selectedDate = dateString;
+            generateTimeSlots();
+        }
+
+        // Generate available time slots
+        function generateTimeSlots() {
+            const timeSlotsDiv = document.getElementById('timeSlots');
+            timeSlotsDiv.innerHTML = '';
+            
+            if (!selectedDate) {
+                timeSlotsDiv.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; color: #666;">Please select a date</div>';
+                return;
+            }
+            
+            const times = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00'];
+            const bookedForDate = bookedSlots[selectedDate] || [];
+            
+            times.forEach(time => {
+                const timeSlot = document.createElement('div');
+                timeSlot.className = 'time-slot';
+                timeSlot.textContent = time;
+                
+                if (bookedForDate.includes(time)) {
+                    timeSlot.classList.add('booked');
+                } else {
+                    timeSlot.onclick = () => selectTime(timeSlot, time);
+                }
+                
+                timeSlotsDiv.appendChild(timeSlot);
+            });
+        }
+
+        function selectTime(element, time) {
+            document.querySelectorAll('.time-slot').forEach(slot => {
+                slot.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            selectedTime = time;
+        }
+
+        // Task management functions
+        function renderTasks() {
+            const taskList = document.getElementById('taskList');
+            taskList.innerHTML = '';
+            
+            tasks.forEach(task => {
+                const taskElement = document.createElement('div');
+                taskElement.className = 'task-item';
+                
+                const statusText = {
+                    'todo': 'To Do',
+                    'in-progress': 'In Progress',
+                    'completed': 'Completed'
+                };
+                
+                taskElement.innerHTML = `
+                    <div class="task-info">
+                        <h4>${task.title}</h4>
+                        <div class="task-meta">
+                            <span><i class="fas fa-user"></i> ${task.assignedTo}</span>
+                            <span><i class="fas fa-calendar"></i> ${task.dueDate}</span>
+                            <span><i class="fas ${task.type === 'appointment' ? 'fa-calendar-check' : 'fa-tasks'}"></i> ${task.type === 'appointment' ? 'Appointment' : 'Task'}</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <span class="task-status status-${task.status}">${statusText[task.status]}</span>
+                        <div class="task-actions">
+                            ${task.status !== 'completed' ? `<button class="btn btn-sm btn-primary" onclick="updateTaskStatus(${task.id}, 'completed')">Complete</button>` : ''}
+                            ${task.status === 'todo' ? `<button class="btn btn-sm" onclick="updateTaskStatus(${task.id}, 'in-progress')">Start</button>` : ''}
+                        </div>
+                    </div>
+                `;
+                
+                taskList.appendChild(taskElement);
+            });
+        }
+
+        function updateTaskStatus(taskId, newStatus) {
+            tasks = tasks.map(task => {
+                if (task.id === taskId) {
+                    return { ...task, status: newStatus };
+                }
+                return task;
+            });
+            renderTasks();
+        }
+
+        function showAddTaskModal() {
+            // In a real app, this would show a modal
+            const newTask = {
+                id: tasks.length + 1,
+                title: 'New Task ' + (tasks.length + 1),
+                assignedTo: 'Anna Smith',
+                dueDate: '2024-02-20',
+                status: 'todo',
+                type: 'task'
+            };
+            tasks.push(newTask);
+            renderTasks();
+            alert('New task added! In a real application, a form would appear here to create custom tasks.');
+        }
+
+        // Schedule functions
+        function renderSchedule() {
+            const scheduleView = document.getElementById('scheduleView');
+            scheduleView.innerHTML = `
+                <div style="background: var(--light); padding: 2rem; border-radius: 10px;">
+                    <h3 style="margin-bottom: 1rem;">Today's Schedule - ${new Date().toDateString()}</h3>
+                    <div style="display: grid; gap: 1rem;">
+                        <div style="display: flex; justify-content: space-between; padding: 1rem; background: white; border-radius: 8px;">
+                            <div>
+                                <strong>Microblading - Sarah Johnson</strong>
+                                <div style="color: #666; font-size: 0.9rem;">09:00 AM - 10:30 AM</div>
+                            </div>
+                            <span class="task-status status-in-progress">In Progress</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 1rem; background: white; border-radius: 8px;">
+                            <div>
+                                <strong>Lash Lift - Maria Garcia</strong>
+                                <div style="color: #666; font-size: 0.9rem;">02:00 PM - 03:00 PM</div>
+                            </div>
+                            <span class="task-status status-todo">Upcoming</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Booking function
+        function bookAppointment() {
+            if (!selectedDate || !selectedTime || !selectedSpecialist) {
+                alert('Please select a date, time, and specialist to book your appointment.');
+                return;
+            }
+
+            const service = document.getElementById('service').value;
+            const clientName = document.getElementById('clientName').value;
+            
+            if (!service || !clientName) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+
+            // Add to booked slots (in a real app, this would go to a backend)
+            if (!bookedSlots[selectedDate]) {
+                bookedSlots[selectedDate] = [];
+            }
+            bookedSlots[selectedDate].push(selectedTime);
+
+            // Add as a task
+            const newTask = {
+                id: tasks.length + 1,
+                title: `${document.getElementById('service').selectedOptions[0].text.split(' - ')[0]} - ${clientName}`,
+                assignedTo: selectedSpecialist,
+                dueDate: selectedDate,
+                status: 'todo',
+                type: 'appointment'
+            };
+            tasks.push(newTask);
+
+            // Show confirmation
+            alert(`Booking confirmed!\n\nService: ${document.getElementById('service').selectedOptions[0].text}\nSpecialist: ${selectedSpecialist}\nDate: ${selectedDate}\nTime: ${selectedTime}`);
+            
+            // Reset form
+            selectedDate = null;
+            selectedTime = null;
+            selectedSpecialist = null;
+            document.querySelectorAll('.calendar-day.selected, .time-slot.selected').forEach(el => {
+                el.classList.remove('selected');
+            });
+            document.getElementById('clientName').value = '';
+            
+            renderTasks();
+            generateTimeSlots();
+        }
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
