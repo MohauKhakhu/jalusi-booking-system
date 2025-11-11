@@ -1,0 +1,17 @@
+######### Elton Maruthulle 10 Nov 2025###
+
+
+####1###
+
+
+use this command to install the old tailwind, the new one is not stable so it gives problems
+when you run the init command
+
+npm i -D tailwindcss@3 postcss autoprefixer
+
+after that command you can run the following command to initialize it
+
+npx tailwindcss init -p
+
+
+###########
