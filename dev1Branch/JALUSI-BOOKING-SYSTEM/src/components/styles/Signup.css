@@ -1,0 +1,97 @@
+.signupWrapper {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #fdf6f9, #fff);
+  position: relative;
+  overflow: hidden;
+  padding: 2rem;
+}
+
+.signupCard {
+  background: white;
+  border-radius: 25px;
+  padding: 3rem 2rem;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 8px 30px rgba(183, 110, 121, 0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeInScale 0.8s ease forwards;
+}
+
+.signupTitle {
+  font-size: 2rem;
+  color: #b76e79;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+}
+
+.signupForm {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.inputGroup {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: #fafafa;
+  border-radius: 50px;
+  padding: 0.6rem 1rem;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.inputGroup:focus-within {
+  border-color: #b76e79;
+  box-shadow: 0 4px 15px rgba(183, 110, 121, 0.25);
+}
+
+.inputIcon {
+  color: #b76e79;
+  font-size: 1.2rem;
+  margin-right: 0.8rem;
+}
+
+input {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 1rem;
+  background: transparent;
+  color: #333;
+}
+
+input::placeholder {
+  color: #aaa;
+}
+
+.btnSignup {
+  margin-top: 1rem;
+  padding: 0.8rem 1.5rem;
+  background: #b76e79;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btnSignup:hover {
+  background: white;
+  color: #b76e79;
+  border: 2px solid #b76e79;
+}
+
+@keyframes fadeInScale {
+  0% { opacity: 0; transform: scale(0.8); }
+  100% { opacity: 1; transform: scale(1); }
+}
